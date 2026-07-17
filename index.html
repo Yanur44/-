@@ -2,7 +2,7 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <title>ডিফেন্ডারসহ ফুটবল গেম</title>
+    <title>ওয়ান-অন-ওয়ান ডিফেন্ডার ফুটবল গেম</title>
     <style>
         body { text-align: center; background: #222; color: white; font-family: Arial, sans-serif; }
         /* ফুটবল মাঠ */
@@ -54,7 +54,7 @@
             top: 185px;
             right: 60px;
         }
-        /* ডিফেন্ডার (কমলা) - এদের ক্লাস দিয়ে ডিজাইন করা হয়েছে */
+        /* ডিফেন্ডার (কমলা) */
         .defender {
             width: 30px;
             height: 30px;
@@ -62,6 +62,7 @@
             border-radius: 50%;
             position: absolute;
             border: 2px solid black;
+            transition: border-color 0.3s;
         }
         /* ফুটবল (সাদা) */
         #ball {
@@ -71,22 +72,26 @@
             border-radius: 50%;
             position: absolute;
             top: 190px;
-            left: 250px;
+            left: 200px;
+        }
+        /* কে আক্রমণ করছে তার ইন্ডিকেটর */
+        .active-defender {
+            border: 3px solid yellow !important; /* যে তাড়া করছে তার মাথায় হলুদ রিং থাকবে */
         }
     </style>
 </head>
 <body>
 
-    <h1>আমার ফুটবল গেম v3.0</h1>
-    <p>কীবোর্ডের Arrow Keys দিয়ে খেলুন। কমলা ডিফেন্ডারদের এড়িয়ে নীল কিপারকে ফাঁকি দিয়ে গোল দিন!</p>
+    <h1>আমার ফুটবল গেম v4.0 (ওয়ান-অন-ওয়ান ডিফেন্স)</h1>
+    <p>কীবোর্ডের Arrow Keys দিয়ে খেলুন। হলুদ বর্ডারওয়ালা ডিফেন্ডারটি প্রথমে অ্যাটাক করবে, তাকে ডজ দিলে পরের জন আসবে!</p>
     <h2 id="score">স্কোর: 0</h2>
 
     <div id="pitch">
         <div id="player"></div>
         <div id="goalkeeper"></div>
-        <!-- ২ জন ডিফেন্ডার -->
-        <div id="def1" class="defender" style="left: 350px; top: 100px;"></div>
-        <div id="def2" class="defender" style="left: 350px; top: 280px;"></div>
+        <!-- ২ জন ডিফেন্ডার আলাদা আলাদা পজিশনে দাঁড়িয়ে থাকবে -->
+        <div id="def1" class="defender" style="left: 300px; top: 150px;"></div>
+        <div id="def2" class="defender" style="left: 450px; top: 200px;"></div>
         <div id="ball"></div>
         <div id="goal"></div>
     </div>
@@ -97,28 +102,26 @@
         const ball = document.getElementById('ball');
         const scoreText = document.getElementById('score');
         
-        // ডিফেন্ডার এলিমেন্ট
         const def1El = document.getElementById('def1');
         const def2El = document.getElementById('def2');
 
         // শুরুর পজিশন
         let playerX = 50, playerY = 185;
         let gkX = 510, gkY = 185;
-        let ballX = 250, ballY = 190;
+        let ballX = 200, ballY = 190;
         
-        // ডিফেন্ডারদের ডাটা (পজিশন ও স্পিড)
+        // ডিফেন্ডারদের ডাটা
         let defenders = [
-            { el: def1El, x: 350, y: 100, speed: 1.2 },
-            { el: def2El, x: 350, y: 280, speed: 0.9 }
+            { el: def1El, startX: 300, startY: 150, x: 300, y: 150, speed: 1.3, active: true },
+            { el: def2El, startX: 450, startY: 200, x: 450, y: 200, speed: 1.6, active: false }
         ];
         
         let gkDirection = 1; 
         let score = 0;
 
-        // গেমের মেইন লুপ
         function gameLoop() {
-            // ১. গোলকিপার AI
-            gkY += 3.5 * gkDirection;
+            // ১. গোলকিপার AI (স্বাভাবিকভাবে উপর-নিচ করবে)
+            gkY += 3 * gkDirection;
             if (gkY <= 0 || gkY >= 370) {
                 gkDirection *= -1;
             }
@@ -131,52 +134,76 @@
                 ball.style.left = ballX + 'px';
             }
 
-            // ৩. ডিফেন্ডারদের AI (তারা বল তাড়া করবে এবং কেড়ে নেবে)
-            defenders.forEach((def) => {
-                // বল কোন দিকে আছে সেই হিসাব করা
-                let dx = ballX - def.x;
-                let dy = ballY - def.y;
-                let distToBall = Math.sqrt(dx*dx + dy*dy);
+            // ৩. কার আক্রমণ করার কথা তা নির্ধারণ করা (One-by-One Logic)
+            // বল যদি ৩০০ পিক্সেলের চেয়ে বামে থাকে, ১ম জন অ্যাটাক করবে। ডজ দিয়ে ডানে চলে গেলে ২য় জন শুরু করবে।
+            if (ballX < 320) {
+                defenders[0].active = true;
+                defenders[1].active = false;
+            } else {
+                defenders[0].active = false;
+                defenders[1].active = true;
+            }
 
-                // ডিফেন্ডাররা বলের দিকে ধেয়ে যাবে
-                if (distToBall > 5) {
-                    def.x += (dx / distToBall) * def.speed;
-                    def.y += (dy / distToBall) * def.speed;
+            // ৪. ডিফেন্ডারদের মুভমেন্ট
+            defenders.forEach((def, index) => {
+                if (def.active) {
+                    // সক্রিয় ডিফেন্ডারকে হলুদ বর্ডার দিয়ে চিহ্নিত করা
+                    def.el.classList.add('active-defender');
+                    
+                    let dx = ballX - def.x;
+                    let dy = ballY - def.y;
+                    let distToBall = Math.sqrt(dx*dx + dy*dy);
+
+                    if (distToBall > 5) {
+                        def.x += (dx / distToBall) * def.speed;
+                        def.y += (dy / distToBall) * def.speed;
+                    }
+
+                    // বল কেড়ে নেওয়ার লজিক
+                    if (distToBall < 25) {
+                        ballX -= 50; 
+                        if (ballX < 10) ballX = 10;
+                        ball.style.left = ballX + 'px';
+                    }
+                } else {
+                    // নিষ্ক্রিয় ডিফেন্ডার আস্তে আস্তে তার নিজের মূল পজিশনে ফেরত চলে যাবে
+                    def.el.classList.remove('active-defender');
+                    let dx = def.startX - def.x;
+                    let dy = def.startY - def.y;
+                    let distToStart = Math.sqrt(dx*dx + dy*dy);
+                    
+                    if (distToStart > 2) {
+                        def.x += (dx / distToStart) * 1.5;
+                        def.y += (dy / distToStart) * 1.5;
+                    }
                 }
 
-                // স্ক্রিনে ডিফেন্ডারদের পজিশন আপডেট
+                // স্ক্রিনে পজিশন আপডেট
                 def.el.style.left = def.x + 'px';
                 def.el.style.top = def.y + 'px';
-
-                // ডিফেন্ডার যদি বল পেয়ে যায় (ট্যাকল/বল কেড়ে নেওয়া)
-                if (distToBall < 25) {
-                    ballX -= 40; // বলকে পেছনে ধাক্কা মেরে কেড়ে নেবে
-                    // বল যাতে মাঠের বাইরে না যায়
-                    if (ballX < 10) ballX = 10;
-                    ball.style.left = ballX + 'px';
-                }
             });
 
-            // ৪. গোল হওয়ার লজিক
+            // ৫. গোল হওয়ার লজিক
             if (ballX >= 580 && ballY >= 150 && ballY <= 250) {
                 score++;
                 scoreText.innerText = "স্কোর: " + score;
-                alert("গোওওওোল! ডিফেন্ডারদের ফাঁকি দিয়ে দারুণ গোল দিলেন!");
+                alert("দারুণ গোল! আপনি ওয়ান-অন-ওয়ান ডিফেন্স ভেঙে দিয়েছেন!");
                 resetPosition();
             }
 
             requestAnimationFrame(gameLoop);
         }
 
-        // পজিশন রিসেট করার ফাংশন
         function resetPosition() {
             playerX = 50; playerY = 185;
-            ballX = 250; ballY = 190;
+            ballX = 200; ballY = 190;
             gkY = 185;
             
-            // ডিফেন্ডারদের আগের জায়গায় ফেরত পাঠানো
-            defenders[0].x = 350; defenders[0].y = 100;
-            defenders[1].x = 350; defenders[1].y = 280;
+            // ডিফেন্ডারদের মূল জায়গায় ফেরত পাঠানো
+            defenders.forEach(def => {
+                def.x = def.startX;
+                def.y = def.startY;
+            });
 
             player.style.left = playerX + 'px';
             player.style.top = playerY + 'px';
@@ -184,7 +211,7 @@
             ball.style.top = ballY + 'px';
         }
 
-        // কীবোর্ড লিসেনার (প্লেয়ার মুভমেন্ট)
+        // কীবোর্ড কন্ট্রোল
         window.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowUp' && playerY > 0) playerY -= 15;
             if (e.key === 'ArrowDown' && playerY < 370) playerY += 15;
@@ -194,7 +221,6 @@
             player.style.left = playerX + 'px';
             player.style.top = playerY + 'px';
 
-            // প্লেয়ার ও বলের ধাক্কা লাগার লজিক
             let distPlayerBall = Math.sqrt(Math.pow(playerX - ballX, 2) + Math.pow(playerY - ballY, 2));
             if (distPlayerBall < 25) {
                 ballX += 25; 
@@ -206,7 +232,6 @@
             }
         });
 
-        // গেম স্টার্ট
         gameLoop();
     </script>
 </body>
