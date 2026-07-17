@@ -2,98 +2,98 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <title>ওয়ান-অন-ওয়ান ডিফেন্ডার ফুটবল গেম</title>
+    <title>নোকিয়া রেট্রো ফুটবল গেম</title>
     <style>
-        body { text-align: center; background: #222; color: white; font-family: Arial, sans-serif; }
-        /* ফুটবল মাঠ */
-        #pitch {
-            width: 600px;
-            height: 400px;
-            background: #2ecc71;
+        body { 
+            text-align: center; 
+            background: #111; 
+            color: #39FF14; /* ক্লাসিক নোকিয়া গ্রিন লাইট কালার */
+            font-family: 'Courier New', Courier, monospace; /* রেট্রো ফন্ট */
+        }
+        /* নোকিয়া বাটন ফোনের স্ক্রিন সাইজ (পিক্সেল আর্ট ফিল) */
+        #nokia-screen {
+            width: 320px;
+            height: 240px;
+            background: #0d3a1a; /* গাঢ় সবুজ ক্লাসিক মাঠ */
             margin: 20px auto;
             position: relative;
-            border: 5px solid white;
-            overflow: hidden;
+            border: 8px solid #333; /* ফোনের বর্ডার */
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+            image-rendering: pixelated; /* পিক্সেল লুক দেওয়ার জন্য */
         }
-        /* মাঝের দাগ */
-        #pitch::after {
-            content: '';
+        /* মাঠের রেখা */
+        .line {
             position: absolute;
+            border: 1px dashed rgba(255, 255, 255, 0.3);
+        }
+        #center-line {
+            height: 100%;
             left: 50%;
             top: 0;
-            width: 2px;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.5);
         }
         /* গোলপোস্ট */
         #goal {
-            width: 15px;
-            height: 100px;
-            background: white;
+            width: 8px;
+            height: 60px;
+            background: #fff;
             position: absolute;
             right: 0;
-            top: 150px;
+            top: 90px;
+            border-left: 2px solid #000;
         }
-        /* প্লেয়ার (লাল) */
+        /* প্লেয়ার ও বল (নোকিয়া ফোনের মতো চারকোনা বা পিক্সেল ডট) */
+        .pixel-sprite {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+        }
         #player {
-            width: 30px;
-            height: 30px;
-            background: red;
-            border-radius: 50%;
-            position: absolute;
-            top: 185px;
-            left: 50px;
+            background: #ff3333; /* লাল প্লেয়ার */
+            border: 1px solid #fff;
         }
-        /* গোলকিপার (নীল) */
         #goalkeeper {
-            width: 30px;
-            height: 30px;
-            background: blue;
-            border-radius: 50%;
-            position: absolute;
-            top: 185px;
-            right: 60px;
+            background: #3333ff; /* নীল কিপার */
+            border: 1px solid #fff;
         }
-        /* ডিফেন্ডার (কমলা) */
         .defender {
-            width: 30px;
-            height: 30px;
-            background: orange;
-            border-radius: 50%;
-            position: absolute;
-            border: 2px solid black;
-            transition: border-color 0.3s;
+            background: #ff9900; /* কমলা ডিফেন্ডার */
+            border: 1px solid #000;
         }
-        /* ফুটবল (সাদা) */
         #ball {
-            width: 20px;
-            height: 20px;
-            background: white;
-            border-radius: 50%;
-            position: absolute;
-            top: 190px;
-            left: 200px;
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            border-radius: 50%; /* গোল বল */
+            box-shadow: 1px 1px 0 #000;
         }
-        /* কে আক্রমণ করছে তার ইন্ডিকেটর */
-        .active-defender {
-            border: 3px solid yellow !important; /* যে তাড়া করছে তার মাথায় হলুদ রিং থাকবে */
+        /* কন্ট্রোল প্যানেল */
+        .controls-info {
+            font-size: 12px;
+            color: #aaa;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
 
-    <h1>আমার ফুটবল গেম v4.0 (ওয়ান-অন-ওয়ান ডিফেন্স)</h1>
-    <p>কীবোর্ডের Arrow Keys দিয়ে খেলুন। হলুদ বর্ডারওয়ালা ডিফেন্ডারটি প্রথমে অ্যাটাক করবে, তাকে ডজ দিলে পরের জন আসবে!</p>
-    <h2 id="score">স্কোর: 0</h2>
+    <h1>NOKIA FOOTBALL 2D</h1>
+    <p>স্কোর: <span id="score">0</span></p>
 
-    <div id="pitch">
-        <div id="player"></div>
-        <div id="goalkeeper"></div>
-        <!-- ২ জন ডিফেন্ডার আলাদা আলাদা পজিশনে দাঁড়িয়ে থাকবে -->
-        <div id="def1" class="defender" style="left: 300px; top: 150px;"></div>
-        <div id="def2" class="defender" style="left: 450px; top: 200px;"></div>
-        <div id="ball"></div>
+    <div id="nokia-screen">
+        <!-- মাঠের সেন্টার লাইন -->
+        <div id="center-line" class="line"></div>
+        
+        <!-- গেম অবজেক্টস -->
+        <div id="player" class="pixel-sprite" style="left: 30px; top: 114px;"></div>
+        <div id="goalkeeper" class="pixel-sprite" style="left: 280px; top: 114px;"></div>
+        <div id="def1" class="pixel-sprite defender" style="left: 150px; top: 50px;"></div>
+        <div id="def2" class="pixel-sprite defender" style="left: 220px; top: 150px;"></div>
+        <div id="ball" style="position: absolute; left: 100px; top: 116px;"></div>
         <div id="goal"></div>
+    </div>
+
+    <div class="controls-info">
+        <p>কন্ট্রোল: কীবোর্ডের <b>Arrow Keys</b> অথবা বাটন ফোনের মতো <b>W, A, S, D</b> ব্যবহার করুন।</p>
     </div>
 
     <script>
@@ -103,91 +103,79 @@
         const scoreText = document.getElementById('score');
         
         const def1El = document.getElementById('def1');
-        const def2El = document.getElementById('def2');
-
-        // শুরুর পজিশন
-        let playerX = 50, playerY = 185;
-        let gkX = 510, gkY = 185;
-        let ballX = 200, ballY = 190;
-        
-        // ডিফেন্ডারদের ডাটা
-        let defenders = [
-            { el: def1El, startX: 300, startY: 150, x: 300, y: 150, speed: 1.3, active: true },
-            { el: def2El, startX: 450, startY: 200, x: 450, y: 200, speed: 1.6, active: false }
+        const defendersData = [
+            { el: def1El, startX: 150, startY: 50, x: 150, y: 50, speed: 0.8, active: true },
+            { el: document.getElementById('def2'), startX: 220, startY: 150, x: 220, y: 150, speed: 1.0, active: false }
         ];
+
+        // শুরুর পজিশন (৩২০x২৪০ স্ক্রিন অনুযায়ী ছোট করা হয়েছে)
+        let playerX = 30, playerY = 114;
+        let gkX = 280, gkY = 114;
+        let ballX = 100, ballY = 116;
         
         let gkDirection = 1; 
         let score = 0;
 
         function gameLoop() {
-            // ১. গোলকিপার AI (স্বাভাবিকভাবে উপর-নিচ করবে)
-            gkY += 3 * gkDirection;
-            if (gkY <= 0 || gkY >= 370) {
+            // ১. রেট্রো স্টাইল গোলকিপার (ধীরে ধীরে উপর-নিচ করবে)
+            gkY += 1.5 * gkDirection;
+            if (gkY <= 90 || gkY >= 140) {
                 gkDirection *= -1;
             }
             goalkeeper.style.top = gkY + 'px';
 
-            // ২. গোলকিপার ও বলের ধাক্কা
+            // গোলকিপার বল আটকে দেওয়া
             let distBallGk = Math.sqrt(Math.pow(gkX - ballX, 2) + Math.pow(gkY - ballY, 2));
-            if (distBallGk < 25) {
-                ballX -= 50; 
+            if (distBallGk < 14) {
+                ballX -= 30; 
                 ball.style.left = ballX + 'px';
             }
 
-            // ৩. কার আক্রমণ করার কথা তা নির্ধারণ করা (One-by-One Logic)
-            // বল যদি ৩০০ পিক্সেলের চেয়ে বামে থাকে, ১ম জন অ্যাটাক করবে। ডজ দিয়ে ডানে চলে গেলে ২য় জন শুরু করবে।
-            if (ballX < 320) {
-                defenders[0].active = true;
-                defenders[1].active = false;
+            // ২. নোকিয়া ওয়ান-বাই-ওয়ান ডিফেন্ডার লজিক
+            if (ballX < 160) {
+                defendersData[0].active = true;
+                defendersData[1].active = false;
             } else {
-                defenders[0].active = false;
-                defenders[1].active = true;
+                defendersData[0].active = false;
+                defendersData[1].active = true;
             }
 
-            // ৪. ডিফেন্ডারদের মুভমেন্ট
-            defenders.forEach((def, index) => {
+            defendersData.forEach((def) => {
                 if (def.active) {
-                    // সক্রিয় ডিফেন্ডারকে হলুদ বর্ডার দিয়ে চিহ্নিত করা
-                    def.el.classList.add('active-defender');
-                    
                     let dx = ballX - def.x;
                     let dy = ballY - def.y;
                     let distToBall = Math.sqrt(dx*dx + dy*dy);
 
-                    if (distToBall > 5) {
+                    if (distToBall > 2) {
                         def.x += (dx / distToBall) * def.speed;
                         def.y += (dy / distToBall) * def.speed;
                     }
 
-                    // বল কেড়ে নেওয়ার লজিক
-                    if (distToBall < 25) {
-                        ballX -= 50; 
+                    // ডিফেন্ডার বল ট্যাকল করলে বল পেছনে চলে যাবে
+                    if (distToBall < 14) {
+                        ballX -= 25; 
                         if (ballX < 10) ballX = 10;
                         ball.style.left = ballX + 'px';
                     }
                 } else {
-                    // নিষ্ক্রিয় ডিফেন্ডার আস্তে আস্তে তার নিজের মূল পজিশনে ফেরত চলে যাবে
-                    def.el.classList.remove('active-defender');
+                    // নিষ্ক্রিয় হলে ধীরে ফিরে যাবে
                     let dx = def.startX - def.x;
                     let dy = def.startY - def.y;
                     let distToStart = Math.sqrt(dx*dx + dy*dy);
-                    
                     if (distToStart > 2) {
-                        def.x += (dx / distToStart) * 1.5;
-                        def.y += (dy / distToStart) * 1.5;
+                        def.x += (dx / distToStart) * 1.0;
+                        def.y += (dy / distToStart) * 1.0;
                     }
                 }
-
-                // স্ক্রিনে পজিশন আপডেট
                 def.el.style.left = def.x + 'px';
                 def.el.style.top = def.y + 'px';
             });
 
-            // ৫. গোল হওয়ার লজিক
-            if (ballX >= 580 && ballY >= 150 && ballY <= 250) {
+            // ৩. গোল হওয়ার লজিক (ছোট গোলপোস্ট)
+            if (ballX >= 310 && ballY >= 90 && ballY <= 150) {
                 score++;
-                scoreText.innerText = "স্কোর: " + score;
-                alert("দারুণ গোল! আপনি ওয়ান-অন-ওয়ান ডিফেন্স ভেঙে দিয়েছেন!");
+                scoreText.innerText = score;
+                alert("GOAL!!");
                 resetPosition();
             }
 
@@ -195,40 +183,47 @@
         }
 
         function resetPosition() {
-            playerX = 50; playerY = 185;
-            ballX = 200; ballY = 190;
-            gkY = 185;
-            
-            // ডিফেন্ডারদের মূল জায়গায় ফেরত পাঠানো
-            defenders.forEach(def => {
+            playerX = 30; playerY = 114;
+            ballX = 100; ballY = 116;
+            gkY = 114;
+            defendersData.forEach(def => {
                 def.x = def.startX;
                 def.y = def.startY;
             });
+            updateElements();
+        }
 
+        function updateElements() {
             player.style.left = playerX + 'px';
             player.style.top = playerY + 'px';
             ball.style.left = ballX + 'px';
             ball.style.top = ballY + 'px';
         }
 
-        // কীবোর্ড কন্ট্রোল
+        // বাটন ফোনের কীবোর্ড কন্ট্রোল (W/A/S/D এবং Arrows)
         window.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowUp' && playerY > 0) playerY -= 15;
-            if (e.key === 'ArrowDown' && playerY < 370) playerY += 15;
-            if (e.key === 'ArrowLeft' && playerX > 0) playerX -= 15;
-            if (e.key === 'ArrowRight' && playerX < 570) playerX += 15;
+            const step = 10; // পিক্সেল স্টেপ মুভমেন্ট
+            
+            if ((e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') && playerY > 5) playerY -= step;
+            if ((e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') && playerY < 220) playerY += step;
+            if ((e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') && playerX > 5) playerX -= step;
+            if ((e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') && playerX < 300) playerX += step;
 
-            player.style.left = playerX + 'px';
-            player.style.top = playerY + 'px';
+            updateElements();
 
+            // প্লেয়ার ও বলের রেট্রো কোলাইডার
             let distPlayerBall = Math.sqrt(Math.pow(playerX - ballX, 2) + Math.pow(playerY - ballY, 2));
-            if (distPlayerBall < 25) {
-                ballX += 25; 
-                if (e.key === 'ArrowUp') ballY -= 10;
-                if (e.key === 'ArrowDown') ballY += 10;
+            if (distPlayerBall < 14) {
+                ballX += 15; 
+                // বলের কোনাকুনি ড্রিবলিং ইফেক্ট
+                if (e.key === 'ArrowUp' || e.key === 'w') ballY -= 8;
+                if (e.key === 'ArrowDown' || e.key === 's') ballY += 8;
                 
-                ball.style.left = ballX + 'px';
-                ball.style.top = ballY + 'px';
+                // বাউন্ডারি চেক
+                if (ballY < 5) ballY = 5;
+                if (ballY > 230) ballY = 230;
+
+                updateElements();
             }
         });
 
