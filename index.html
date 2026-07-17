@@ -2,7 +2,7 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <title>আমার ফুটবল গেম</title>
+    <title>আমার উন্নত ফুটবল গেম</title>
     <style>
         body { text-align: center; background: #222; color: white; font-family: Arial, sans-serif; }
         /* ফুটবল মাঠ */
@@ -15,6 +15,16 @@
             border: 5px solid white;
             overflow: hidden;
         }
+        /* মাঝের দাগ */
+        #pitch::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            width: 2px;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.5);
+        }
         /* গোলপোস্ট */
         #goal {
             width: 15px;
@@ -24,7 +34,7 @@
             right: 0;
             top: 150px;
         }
-        /* প্লেয়ার */
+        /* প্লেয়ার (লাল) */
         #player {
             width: 30px;
             height: 30px;
@@ -33,8 +43,19 @@
             position: absolute;
             top: 185px;
             left: 50px;
+            transition: background 0.2s;
         }
-        /* ফুটবল */
+        /* গোলকিপার (নীল) */
+        #goalkeeper {
+            width: 30px;
+            height: 30px;
+            background: blue;
+            border-radius: 50%;
+            position: absolute;
+            top: 185px;
+            right: 60px;
+        }
+        /* ফুটবল (সাদা) */
         #ball {
             width: 20px;
             height: 20px;
@@ -42,18 +63,19 @@
             border-radius: 50%;
             position: absolute;
             top: 190px;
-            left: 200px;
+            left: 250px;
         }
     </style>
 </head>
 <body>
 
-    <h1>আমার প্রথম ফুটবল গেম</h1>
-    <p>কীবোর্ডের Arrow Keys (← ↑ ↓ →) দিয়ে প্লেয়ার নড়াচড়া করুন এবং বলটিকে গোলে পুশ করুন!</p>
+    <h1>আমার প্রথম ফুটবল গেম v2.0</h1>
+    <p>কীবোর্ডের Arrow Keys (← ↑ ↓ →) দিয়ে লাল প্লেয়ারটি নিয়ন্ত্রণ করুন। নীল গোলকিপারকে ফাঁকি দিয়ে গোল দিন!</p>
     <h2 id="score">স্কোর: 0</h2>
 
     <div id="pitch">
         <div id="player"></div>
+        <div id="goalkeeper"></div>
         <div id="ball"></div>
         <div id="goal"></div>
     </div>
@@ -61,47 +83,81 @@
     <script>
         // এলিমেন্টগুলো সিলেক্ট করা
         const player = document.getElementById('player');
+        const goalkeeper = document.getElementById('goalkeeper');
         const ball = document.getElementById('ball');
         const scoreText = document.getElementById('score');
 
         // শুরুর পজিশন
         let playerX = 50, playerY = 185;
+        let gkX = 510, gkY = 185;
         let ballX = 250, ballY = 190;
+        
+        let gkDirection = 1; // ১ মানে নিচে যাবে, -১ মানে উপরে যাবে
         let score = 0;
 
-        // কীবোর্ড লিসেনার (প্লেয়ার মুভমেন্ট)
-        window.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowUp') playerY -= 15;
-            if (e.key === 'ArrowDown') playerY += 15;
-            if (e.key === 'ArrowLeft') playerX -= 15;
-            if (e.key === 'ArrowRight') playerX += 15;
+        // গেমের মেইন লুপ (সবকিছু অনবরত আপডেট করার জন্য)
+        function gameLoop() {
+            // ১. গোলকিপারের মুভমেন্ট (AI)
+            gkY += 3 * gkDirection;
+            if (gkY <= 0 || gkY >= 370) {
+                gkDirection *= -1; // দেয়ালে লাগলে দিক পরিবর্তন করবে
+            }
+            goalkeeper.style.top = gkY + 'px';
 
-            // স্ক্রিনে প্লেয়ার আপডেট
-            player.style.left = playerX + 'px';
-            player.style.top = playerY + 'px';
-
-            // প্লেয়ার ও বলের ধাক্কা লাগার লজিক (Collision)
-            let distance = Math.sqrt(Math.pow(playerX - ballX, 2) + Math.pow(playerY - ballY, 2));
-            if (distance < 25) {
-                // বল সামনের দিকে এগিয়ে যাবে
-                ballX += 30;
+            // ২. গোলকিপার ও বলের ধাক্কা (কিপার বল আটকে দেবে)
+            let distBallGk = Math.sqrt(Math.pow(gkX - ballX, 2) + Math.pow(gkY - ballY, 2));
+            if (distBallGk < 25) {
+                ballX -= 40; // কিপারের গায়ে লাগলে বল উল্টো দিকে বাউন্স করবে
                 ball.style.left = ballX + 'px';
             }
 
-            // গোল হওয়ার লজিক (বল যদি গোলপোস্টে ঢোকে)
+            // ৩. গোল হওয়ার লজিক
             if (ballX >= 580 && ballY >= 150 && ballY <= 250) {
                 score++;
                 scoreText.innerText = "স্কোর: " + score;
-                alert("গোলপোস্ট!! চমৎকার গোল!");
-                // বল ও প্লেয়ার আবার আগের জায়গায় ফেরত যাবে
-                playerX = 50; playerY = 185;
-                ballX = 250; ballY = 190;
-                player.style.left = playerX + 'px';
-                player.style.top = playerY + 'px';
+                alert("গোওওওোল! চমৎকার খেলেছেন!");
+                resetPosition();
+            }
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        // পজিশন রিসেট করার ফাংশন
+        function resetPosition() {
+            playerX = 50; playerY = 185;
+            ballX = 250; ballY = 190;
+            gkY = 185;
+            player.style.left = playerX + 'px';
+            player.style.top = playerY + 'px';
+            ball.style.left = ballX + 'px';
+            ball.style.top = ballY + 'px';
+        }
+
+        // কীবোর্ড লিসেনার (প্লেয়ার মুভমেন্ট)
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowUp' && playerY > 0) playerY -= 15;
+            if (e.key === 'ArrowDown' && playerY < 370) playerY += 15;
+            if (e.key === 'ArrowLeft' && playerX > 0) playerX -= 15;
+            if (e.key === 'ArrowRight' && playerX < 570) playerX += 15;
+
+            player.style.left = playerX + 'px';
+            player.style.top = playerY + 'px';
+
+            // প্লেয়ার ও বলের ধাক্কা লাগার লজিক
+            let distPlayerBall = Math.sqrt(Math.pow(playerX - ballX, 2) + Math.pow(playerY - ballY, 2));
+            if (distPlayerBall < 25) {
+                ballX += 25; // বল সামনের দিকে এগিয়ে যাবে
+                // প্লেয়ারের ডিরেকশন অনুযায়ী বল সামান্য উপর-নিচ হবে
+                if (e.key === 'ArrowUp') ballY -= 10;
+                if (e.key === 'ArrowDown') ballY += 10;
+                
                 ball.style.left = ballX + 'px';
                 ball.style.top = ballY + 'px';
             }
         });
+
+        // গেমটি চালু করা
+        gameLoop();
     </script>
 </body>
 </html>
