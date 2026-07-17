@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <title>আমার ফুটবল গেম</title>
+    <style>
+        body { text-align: center; background: #222; color: white; font-family: Arial, sans-serif; }
+        /* ফুটবল মাঠ */
+        #pitch {
+            width: 600px;
+            height: 400px;
+            background: #2ecc71;
+            margin: 20px auto;
+            position: relative;
+            border: 5px solid white;
+            overflow: hidden;
+        }
+        /* গোলপোস্ট */
+        #goal {
+            width: 15px;
+            height: 100px;
+            background: white;
+            position: absolute;
+            right: 0;
+            top: 150px;
+        }
+        /* প্লেয়ার */
+        #player {
+            width: 30px;
+            height: 30px;
+            background: red;
+            border-radius: 50%;
+            position: absolute;
+            top: 185px;
+            left: 50px;
+        }
+        /* ফুটবল */
+        #ball {
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 190px;
+            left: 200px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>আমার প্রথম ফুটবল গেম</h1>
+    <p>কীবোর্ডের Arrow Keys (← ↑ ↓ →) দিয়ে প্লেয়ার নড়াচড়া করুন এবং বলটিকে গোলে পুশ করুন!</p>
+    <h2 id="score">স্কোর: 0</h2>
+
+    <div id="pitch">
+        <div id="player"></div>
+        <div id="ball"></div>
+        <div id="goal"></div>
+    </div>
+
+    <script>
+        // এলিমেন্টগুলো সিলেক্ট করা
+        const player = document.getElementById('player');
+        const ball = document.getElementById('ball');
+        const scoreText = document.getElementById('score');
+
+        // শুরুর পজিশন
+        let playerX = 50, playerY = 185;
+        let ballX = 250, ballY = 190;
+        let score = 0;
+
+        // কীবোর্ড লিসেনার (প্লেয়ার মুভমেন্ট)
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowUp') playerY -= 15;
+            if (e.key === 'ArrowDown') playerY += 15;
+            if (e.key === 'ArrowLeft') playerX -= 15;
+            if (e.key === 'ArrowRight') playerX += 15;
+
+            // স্ক্রিনে প্লেয়ার আপডেট
+            player.style.left = playerX + 'px';
+            player.style.top = playerY + 'px';
+
+            // প্লেয়ার ও বলের ধাক্কা লাগার লজিক (Collision)
+            let distance = Math.sqrt(Math.pow(playerX - ballX, 2) + Math.pow(playerY - ballY, 2));
+            if (distance < 25) {
+                // বল সামনের দিকে এগিয়ে যাবে
+                ballX += 30;
+                ball.style.left = ballX + 'px';
+            }
+
+            // গোল হওয়ার লজিক (বল যদি গোলপোস্টে ঢোকে)
+            if (ballX >= 580 && ballY >= 150 && ballY <= 250) {
+                score++;
+                scoreText.innerText = "স্কোর: " + score;
+                alert("গোলপোস্ট!! চমৎকার গোল!");
+                // বল ও প্লেয়ার আবার আগের জায়গায় ফেরত যাবে
+                playerX = 50; playerY = 185;
+                ballX = 250; ballY = 190;
+                player.style.left = playerX + 'px';
+                player.style.top = playerY + 'px';
+                ball.style.left = ballX + 'px';
+                ball.style.top = ballY + 'px';
+            }
+        });
+    </script>
+</body>
+</html>
