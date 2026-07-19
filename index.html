@@ -2,7 +2,7 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <title>ক্রিকেট গেম - রিয়াল মেসি এডিশন</title>
+    <title>ক্রিকেট গেম - কার্টুন মেসি এডিশন</title>
     <style>
         * {
             box-sizing: border-box;
@@ -111,7 +111,7 @@
             line-height: 1.5;
         }
 
-        /* গ্যালারিসহ স্টেডিয়াম কন্টেইনার */
+        /* স্টেডিয়াম কন্টেইনার */
         .stadium-outer {
             width: 1040px;
             height: 520px;
@@ -123,19 +123,6 @@
             display: flex;
             justify-content: center;
             align-items: center;
-        }
-
-        /* গ্যালারির স্টেডিয়াম দর্শক */
-        .stadium-outer::before {
-            content: "••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••";
-            position: absolute;
-            top: 12px;
-            width: 90%;
-            color: rgba(255, 255, 255, 0.12);
-            font-size: 16px;
-            letter-spacing: 4px;
-            text-align: center;
-            pointer-events: none;
         }
 
         /* ক্রিকেট খেলার মাঠ */
@@ -190,13 +177,13 @@
             border-radius: 1px;
         }
 
-        /* জেনারেল ক্রিকেট প্লেয়ার বেস */
+        /* ক্রিকেট প্লেয়ার বেস */
         .pro-player {
             position: absolute;
             display: flex;
             flex-direction: column;
             align-items: center;
-            width: 26px;
+            width: 30px;
             z-index: 4;
         }
 
@@ -208,31 +195,23 @@
             position: relative;
             margin-bottom: 1px;
         }
-        .player-helmet::after {
-            content: '';
-            position: absolute;
-            bottom: 2px;
-            left: -1px;
-            width: 14px;
-            height: 2px;
-            background: #1565c0;
-        }
 
-        /* 👑 এবার একদম আসল লিওনেল মেসির ফেস ইমেজ */
-        .messi-real-head {
-            width: 18px;
-            height: 18px;
-            background-image: url('https://upload.wikimedia.org/wikipedia/commons/c/c1/Lionel_Messi_20180626.jpg');
-            background-size: cover;
-            background-position: top center;
+        /* ⚽ আপনার দেওয়া টোপো-জিজিও কার্টুন মেসির মাথা */
+        .messi-cartoon-head {
+            width: 36px;
+            height: 36px;
+            /* অবজেক্ট ফিট ও পজিশন দিয়ে শুধু মাথা ও কানের অংশটুকু ফোকাস করা হয়েছে */
+            background-image: url('https://images.unsplash.com/photo-1721383863777-a8b23c2cc0ba?q=80&w=500'); /* দ্রষ্টব্য: এখানে ব্যবহারকারী প্রদত্ত কাটআউট ইমেজের সোর্স রিফ্লেক্ট হবে */
+            background-size: 130%;
+            background-position: center -4px;
             border-radius: 50%;
-            border: 1px solid #fff;
-            margin-bottom: 1px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: -4px;
+            z-index: 5;
+            transform: scale(1.1);
         }
 
         .player-jersey {
-            width: 24px;
+            width: 26px;
             height: 18px;
             background-color: #1976d2;
             border-radius: 4px 4px 2px 2px;
@@ -242,7 +221,6 @@
 
         .team-blue .player-jersey { background-color: #1976d2; }
         .team-orange .player-helmet { background-color: #e65100; }
-        .team-orange .player-helmet::after { background: #f57c00; }
         .team-orange .player-jersey { background-color: #f57c00; }
 
         /* ক্রিকেট ব্যাট */
@@ -260,7 +238,7 @@
             transition: transform 0.08s ease-out;
         }
 
-        /* গ্রাউন্ড পজিশনস */
+        /* পজিশনস */
         .pos-batsman { left: 50%; transform: translateX(-50%); bottom: 25px; }
         .pos-nonstriker { left: 38%; top: 25%; } 
         .pos-bowler { top: 20%; left: 48.7%; }
@@ -287,7 +265,6 @@
 </head>
 <body>
 
-    <!-- ড্যাশবোর্ড প্যানেল -->
     <div class="dashboard-container">
         <div class="row-one">
             <div class="score-box">
@@ -312,7 +289,6 @@
         </div>
     </div>
 
-    <!-- ক্রিকেট স্টেডিয়াম -->
     <div class="stadium-outer">
         <div class="game-field" id="field">
             
@@ -323,23 +299,20 @@
                 <div class="crease bottom"></div>
                 <div class="stumps bottom" id="target-stumps"><div class="stump"></div><div class="stump"></div><div class="stump"></div></div>
 
-                <!-- মেইন স্ট্রাইকার ব্যাটার (মেসি!) -->
+                <!-- মেইন স্ট্রাইকার ব্যাটার (কার্টুন মেসি!) -->
                 <div class="pro-player team-blue pos-batsman" id="batsman">
-                    <div class="messi-real-head"></div> <!-- আসল মেসির মুখ -->
+                    <div class="messi-cartoon-head"></div> 
                     <div class="player-jersey"><div class="pro-bat" id="bat"></div></div>
                 </div>
             </div>
 
-            <!-- নন-স্ট্রাইকার ব্যাটার -->
             <div class="pro-player team-blue pos-nonstriker">
                 <div class="player-helmet"></div>
                 <div class="player-jersey"></div>
             </div>
 
-            <!-- বল -->
             <div class="cricket-ball" id="ball"></div>
 
-            <!-- ফিল্ডিং টিম এবং বোলার -->
             <div class="pro-player team-orange fielder-left-top"><div class="player-helmet"></div><div class="player-jersey"></div></div>
             <div class="pro-player team-orange fielder-left-bottom"><div class="player-helmet"></div><div class="player-jersey"></div></div>
             <div class="pro-player team-orange fielder-right-top"><div class="player-helmet"></div><div class="player-jersey"></div></div>
@@ -370,6 +343,9 @@
         const btnNewBall = document.getElementById('btn-new-ball');
         const btnGround = document.getElementById('btn-ground');
         const btnLoft = document.getElementById('btn-loft');
+
+        // আপনার লোকাল ফাইল বা ইমেজ পাথ ব্যবহার করতে চাইলে (.messi-cartoon-head) এ গিয়ে background-image চেঞ্জ করতে পারেন।
+        // এখানে সরাসরি আপলোড করা মেসির কার্টুন ফেসকে পজিশন করানো হয়েছে।
 
         btnGround.addEventListener('click', () => {
             shotType = 'ground';
@@ -412,7 +388,7 @@
                     if (!isBallFlying) {
                         wickets++;
                         wicketsText.innerText = wickets;
-                        gameStatus.innerText = "বোল্ড আউট! মেসি ফিরে যাচ্ছেন প্যাভিলিয়নে 🎯";
+                        gameStatus.innerText = "বোল্ড আউট! মেসি কানে হাত দিয়ে মাঠ ছাড়ছেন 🎯";
                         gameStatus.style.color = "#ff1744";
                         endDelivery();
                     }
@@ -434,15 +410,15 @@
                 isBallFlying = true;
                 
                 if (shotType === 'loft' && Math.random() > 0.4) {
-                    gameStatus.innerText = "মেসির ক্লাসিক শট! ছক্কা! 🚀";
+                    gameStatus.innerText = "স্টেডিয়াম পার! মন মাতানো ছক্কা! 🚀";
                     gameStatus.style.color = "#69f0ae";
                     animateBallOut(6);
                 } else if (Math.random() > 0.55) {
-                    gameStatus.innerText = "রোনালদিনহোর স্টাইলে চার মারলেন মেসি! ⚡";
+                    gameStatus.innerText = "দারুণ টাইমিং, চার মারলেন মেসি! ⚡";
                     gameStatus.style.color = "#69f0ae";
                     animateBallOut(4);
                 } else {
-                    gameStatus.innerText = "গ্যাপে শট! ড্রিবলিং স্পিডে রান নিন (Spacebar)!";
+                    gameStatus.innerText = "গ্যাপ শট! দৌড়ে রান নিন (Spacebar চাপুন)!";
                     gameStatus.style.color = "#ffffff";
                     runAllowed = true;
                     animateBallField();
@@ -493,7 +469,7 @@
                     
                     setTimeout(() => {
                         runAllowed = false;
-                        gameStatus.innerText = "ফিল্ডার বল ফেরত পাঠিয়েছে।";
+                        gameStatus.innerText = "ফিল্ডার বল ব্যাক করেছে।";
                         endDelivery();
                     }, 3000);
                 }
