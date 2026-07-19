@@ -2,7 +2,7 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <title>প্রো ক্রিকেট গেম</title>
+    <title>প্রো ক্রিকেট গেম - ফাইনাল ফিক্স</title>
     <style>
         * {
             box-sizing: border-box;
@@ -111,19 +111,48 @@
             line-height: 1.5;
         }
 
-        /* ক্রিকেট স্টেডিয়াম */
+        /* গ্যালারি স্টেডিয়াম কন্টেইনার */
+        .stadium-outer {
+            width: 1040px;
+            height: 520px;
+            background: radial-gradient(circle, #25352e 60%, #111a16 100%);
+            border-radius: 50%;
+            padding: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* গ্যালারির দর্শক (Crowd Visual Effect) */
+        .stadium-outer::before {
+            content: "• • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • •";
+            position: absolute;
+            top: 8px;
+            left: 5%;
+            width: 90%;
+            color: rgba(255, 255, 255, 0.15);
+            font-size: 12px;
+            word-spacing: 6px;
+            text-align: center;
+            line-height: 1.2;
+            letter-spacing: 2px;
+            pointer-events: none;
+        }
+
+        /* ক্রিকেট মাঠ */
         .game-field {
             width: 1000px;
             height: 480px;
             background-color: #1b6632; 
             border-radius: 50%;
-            border: 3px dashed rgba(255, 255, 255, 0.4);
+            border: 3px dashed rgba(255, 255, 255, 0.3);
             position: relative;
-            box-shadow: inset 0 0 80px rgba(0,0,0,0.5), 0 12px 36px rgba(0,0,0,0.5);
-            overflow: hidden;
+            box-shadow: inset 0 0 60px rgba(0,0,0,0.4);
         }
 
-        /* মাটির পিচ */
+        /* পিচ */
         .cricket-pitch {
             position: absolute;
             width: 65px;
@@ -132,9 +161,9 @@
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%);
-            box-shadow: 0 0 15px rgba(0,0,0,0.2);
             border-left: 1px solid #c2a278;
             border-right: 1px solid #c2a278;
+            z-index: 2;
         }
 
         .crease {
@@ -164,7 +193,7 @@
             border-radius: 1px;
         }
 
-        /* রিয়ালিস্টিক ক্রিকেট প্লেয়ার মেকার */
+        /* রিয়ালিস্টিক ক্রিকেট প্লেয়ার */
         .pro-player {
             position: absolute;
             display: flex;
@@ -181,7 +210,6 @@
             border-radius: 6px 6px 3px 3px;
             position: relative;
             margin-bottom: 1px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
         .player-helmet::after {
             content: '';
@@ -221,13 +249,14 @@
             transform: rotate(-30deg);
             transform-origin: top right;
             border-radius: 1px;
+            transition: transform 0.1s;
         }
 
-        /* গ্রাউন্ড পজিশনস */
+        /* প্লেয়ার পজিশনস */
         .pos-batsman { left: 50%; transform: translateX(-50%); bottom: 32px; }
         
-        /* 💡 ফিক্সড: নন-স্ট্রাইকারকে উইকেটের ডানপাশে সরানো হয়েছে */
-        .pos-nonstriker { left: 70px; top: 18px; } 
+        /* ফিক্সড: নন-স্ট্রাইকার এখন পিচের বাইরে নিরাপদ জায়গায় দৃশ্যমান */
+        .pos-nonstriker { left: 42%; top: 29%; } 
         
         .pos-bowler { top: 20%; left: 48.7%; }
         
@@ -253,10 +282,11 @@
 </head>
 <body>
 
+    <!-- ওপরের ড্যাশবোর্ড -->
     <div class="dashboard-container">
         <div class="row-one">
             <div class="score-box">
-                आपका রান: <span id="total-runs" style="color: #ffd54f;">0</span> 
+                আপনার রান: <span id="total-runs" style="color: #ffd54f;">0</span> 
                 &nbsp;|&nbsp; চলতি শটে: <span id="current-run" style="color: #ffd54f;">0</span> 
                 &nbsp;|&nbsp; উইকেট: <span id="wickets" style="color: #69f0ae;">0</span>
             </div>
@@ -277,37 +307,40 @@
         </div>
     </div>
 
-    <div class="game-field">
-        
-        <div class="cricket-pitch">
-            <div class="crease top"></div>
-            <div class="stumps top"><div class="stump"></div><div class="stump"></div><div class="stump"></div></div>
+    <!-- গ্যালারিসহ স্টেডিয়াম মাঠ -->
+    <div class="stadium-outer">
+        <div class="game-field">
+            
+            <div class="cricket-pitch">
+                <div class="crease top"></div>
+                <div class="stumps top"><div class="stump"></div><div class="stump"></div><div class="stump"></div></div>
 
-            <div class="crease bottom"></div>
-            <div class="stumps bottom"><div class="stump"></div><div class="stump"></div><div class="stump"></div></div>
+                <div class="crease bottom"></div>
+                <div class="stumps bottom"><div class="stump"></div><div class="stump"></div><div class="stump"></div></div>
 
-            <!-- মেইন স্ট্রাইকার ব্যাটার -->
-            <div class="pro-player team-blue pos-batsman" id="batsman">
-                <div class="player-helmet"></div>
-                <div class="player-jersey"><div class="pro-bat" id="bat"></div></div>
+                <!-- মেইন স্ট্রাইকার ব্যাটার -->
+                <div class="pro-player team-blue pos-batsman" id="batsman">
+                    <div class="player-helmet"></div>
+                    <div class="player-jersey"><div class="pro-bat" id="bat"></div></div>
+                </div>
             </div>
+
+            <!-- ফিক্সড নন-স্ট্রাইকার ব্যাটার -->
+            <div class="pro-player team-blue pos-nonstriker">
+                <div class="player-helmet"></div>
+                <div class="player-jersey"></div>
+            </div>
+
+            <div class="cricket-ball" id="ball"></div>
+
+            <!-- ফিল্ডার ও বোলার -->
+            <div class="pro-player team-orange fielder-left-top"><div class="player-helmet"></div><div class="player-jersey"></div></div>
+            <div class="pro-player team-orange fielder-left-bottom"><div class="player-helmet"></div><div class="player-jersey"></div></div>
+            <div class="pro-player team-orange fielder-right-top"><div class="player-helmet"></div><div class="player-jersey"></div></div>
+            <div class="pro-player team-orange fielder-right-bottom"><div class="player-helmet"></div><div class="player-jersey"></div></div>
+            <div class="pro-player team-orange pos-bowler"><div class="player-helmet"></div><div class="player-jersey"></div></div>
+
         </div>
-
-        <!-- নন-স্ট্রাইকার ব্যাটার (উইকেটের পাশ ঘেঁষে পজিশন ফিক্সড) -->
-        <div class="pro-player team-blue pos-nonstriker">
-            <div class="player-helmet"></div>
-            <div class="player-jersey"></div>
-        </div>
-
-        <div class="cricket-ball" id="ball"></div>
-
-        <!-- ফিল্ডার ও বোলার -->
-        <div class="pro-player team-orange fielder-left-top"><div class="player-helmet"></div><div class="player-jersey"></div></div>
-        <div class="pro-player team-orange fielder-left-bottom"><div class="player-helmet"></div><div class="player-jersey"></div></div>
-        <div class="pro-player team-orange fielder-right-top"><div class="player-helmet"></div><div class="player-jersey"></div></div>
-        <div class="pro-player team-orange fielder-right-bottom"><div class="player-helmet"></div><div class="player-jersey"></div></div>
-        <div class="pro-player team-orange pos-bowler"><div class="player-helmet"></div><div class="player-jersey"></div></div>
-
     </div>
 
     <script>
@@ -318,6 +351,7 @@
         let isBallBowled = false;
         let ballTimer = null;
         let shotType = 'ground';
+        let runAllowed = false; // রান নেওয়ার অনুমতি ট্র্যাকিং
 
         const ball = document.getElementById('ball');
         const bat = document.getElementById('bat');
@@ -346,6 +380,7 @@
             
             isBallBowled = true;
             isBallFlying = false;
+            runAllowed = false;
             currentShotRuns = 0;
             currentRunText.innerText = 0;
             gameStatus.innerText = "বোলার রান-আপ নিচ্ছে... রেডি!";
@@ -357,10 +392,12 @@
 
             let ballTop = 24;
             
+            // একটু ধীরগতির বল করা হলো যাতে প্লেয়ার সময় পায়
             ballTimer = setInterval(() => {
-                ballTop += 1.8;
+                ballTop += 1.2; 
                 ball.style.top = ballTop + '%';
 
+                // বল ব্যাটারকে ক্রস করে স্টাম্পে লাগলে (বোল্ড আউট)
                 if (ballTop >= 88) {
                     clearInterval(ballTimer);
                     if (!isBallFlying) {
@@ -378,10 +415,13 @@
             if (!isBallBowled || isBallFlying) return;
 
             const ballTopPercent = parseFloat(ball.style.top);
+            
+            // ব্যাটের অ্যানিমেশন
             bat.style.transform = 'rotate(-100deg)';
             setTimeout(() => { bat.style.transform = 'rotate(-30deg)'; }, 150);
 
-            if (ballTopPercent >= 76 && ballTopPercent <= 84) {
+            // শট জোনের টাইমিং উইন্ডো একটু বাড়ানো হলো (৭২% থেকে ৮৬%)
+            if (ballTopPercent >= 72 && ballTopPercent <= 86) {
                 clearInterval(ballTimer);
                 isBallFlying = true;
                 
@@ -394,8 +434,9 @@
                     gameStatus.style.color = "#69f0ae";
                     animateBallOut(4);
                 } else {
-                    gameStatus.innerText = "গ্যাপে ঠেলেছেন! রান নিন (Spacebar)";
+                    gameStatus.innerText = "গ্যাপে ঠেলেছেন! রান নিন (Spacebar চাপুন)";
                     gameStatus.style.color = "#ffffff";
+                    runAllowed = true; // স্পেসবার দিয়ে রান এক্টিভেট
                     animateBallField();
                 }
             } else {
@@ -404,12 +445,15 @@
             }
         }
 
+        // বাউন্ডারির জন্য বলের পজিশন পরিবর্তন ও অ্যানিমেশন
         function animateBallOut(runs) {
             let ballTop = parseFloat(ball.style.top);
             let ballLeft = parseFloat(ball.style.left);
+            let angle = (Math.random() - 0.5) * 4; // র্যান্ডম ডিরেকশন
+
             const flyTimer = setInterval(() => {
-                ballTop += 3;
-                ballLeft += (Math.random() > 0.5 ? 2.5 : -2.5);
+                ballTop += 4;
+                ballLeft += angle;
                 ball.style.top = ballTop + '%';
                 ball.style.left = ballLeft + '%';
 
@@ -424,30 +468,37 @@
             }, 20);
         }
 
+        // মাঠের ভেতর বল ড্রপ করার পজিশন অ্যানিমেশন
         function animateBallField() {
             let ballTop = parseFloat(ball.style.top);
             let ballLeft = parseFloat(ball.style.left);
-            let targetTop = 55 + Math.random() * 20;
+            
+            // মাঠের যেকোনো একটা র্যান্ডম দিকে বল যাবে
+            let targetTop = 50 + Math.random() * 25;
             let targetLeft = 15 + Math.random() * 70;
 
             const fieldTimer = setInterval(() => {
-                ballTop += (targetTop - ballTop) * 0.1;
-                ballLeft += (targetLeft - ballLeft) * 0.1;
+                ballTop += (targetTop - ballTop) * 0.08;
+                ballLeft += (targetLeft - ballLeft) * 0.08;
                 ball.style.top = ballTop + '%';
                 ball.style.left = ballLeft + '%';
 
                 if (Math.abs(ballTop - targetTop) < 1) {
                     clearInterval(fieldTimer);
+                    
+                    // ২.৫ সেকেন্ড পর ফিল্ডার বল ফেরত পাঠাবে, তখন রান নেওয়া বন্ধ
                     setTimeout(() => {
-                        gameStatus.innerText = "ফিল্ডার বল ফেরত পাঠিয়েছে।";
+                        runAllowed = false;
+                        gameStatus.innerText = "ফিল্ডার বল ফেরত পাঠিয়েছে। ওভার শেষ।";
                         endDelivery();
                     }, 2500);
                 }
             }, 25);
         }
 
+        // স্পেসবার দিয়ে ম্যানুয়াল রান নেওয়ার ফাংশন
         function takeRun() {
-            if (isBallFlying && currentShotRuns < 3 && gameStatus.innerText.includes("Spacebar")) {
+            if (runAllowed && currentShotRuns < 3) {
                 currentShotRuns++;
                 totalRuns++;
                 currentRunText.innerText = currentShotRuns;
@@ -458,6 +509,7 @@
         function endDelivery() {
             isBallBowled = false;
             isBallFlying = false;
+            runAllowed = false;
         }
 
         window.addEventListener('keydown', (e) => {
