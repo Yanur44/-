@@ -2,7 +2,7 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <title>ক্রিকেট গেম</title>
+    <title>ক্রিকেট গেম - ১০০% পারফেক্ট ফাইনাল</title>
     <style>
         * {
             box-sizing: border-box;
@@ -17,6 +17,7 @@
             align-items: center;
             height: 100vh;
             font-family: sans-serif;
+            overflow: hidden;
         }
 
         /* ১ম স্ক্রিনশটের হুবহু সবুজ মাঠ */
@@ -25,13 +26,14 @@
             height: 480px;
             background-color: #1f783c; 
             border-radius: 50%;
-            border: 2px dashed rgba(255, 255, 255, 0.5); /* বাউন্ডারি ওভাল */
+            border: 2px dashed rgba(255, 255, 255, 0.5);
             position: relative;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: space-between;
             padding: 20px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
 
         /* ওপরে কালো স্কোরবোর্ড */
@@ -99,13 +101,13 @@
         }
 
         /* ------------------------------------------------ */
-        /* ফিক্সড পিচ এবং নিখুঁত ২ডি উইকেটের পজিশন */
+        /* পিচ এবং নিখুঁত ২ডি উইকেটের পজিশন */
         /* ------------------------------------------------ */
         .cricket-pitch {
             position: absolute;
             width: 75px;
             height: 250px;
-            background-color: #d7bc9b; /* পিচের আসল কালার */
+            background-color: #d7bc9b;
             left: 50%;
             top: 50%;
             transform: translate(-50%, -40%);
@@ -113,12 +115,14 @@
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
-            padding: 25px 0; /* ক্রিজ লাইনের ইনসেট পজিশনিং */
+            padding: 25px 0;
+            z-index: 2;
         }
 
         /* সাদা ক্রিজ লাইন */
         .bowling-crease {
-            width: 100%;
+            width: 110%;
+            left: -5%;
             height: 2px;
             background-color: white;
             position: absolute;
@@ -126,7 +130,7 @@
         .bowling-crease.top { top: 35px; }
         .bowling-crease.bottom { bottom: 35px; }
 
-        /* স্টাম্পস/উইকেট (৩টি কাঠের কাঠি) */
+        /* স্টাম্পস/উইকেট */
         .wicket-stumps {
             width: 20px;
             display: flex;
@@ -140,12 +144,27 @@
         .stump-stick {
             width: 3.5px;
             height: 12px;
-            background-color: #e08e39; /* স্টাম্পের রঙ */
+            background-color: #e08e39;
             border-radius: 1px;
         }
 
         /* ------------------------------------------------ */
-        /* আপনার আসল মানুষের মতো দেখতে প্লেয়ার ডিজাইন (CSS Sprite) */
+        /* গ্লোবাল ক্রিকেট বল (বোলারের হাতের পজিশনে নিখুঁতভাবে এলাইন্ড) */
+        /* ------------------------------------------------ */
+        .cricket-ball {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #ff1744; 
+            border-radius: 50%;
+            top: 27.5%; /* বোলারের ঠিক হাতের কাছে পজিশন ফিক্সড */
+            left: 49.3%;
+            z-index: 4;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+        }
+
+        /* ------------------------------------------------ */
+        /* মানুষের মতো দেখতে প্লেয়ার ডিজাইন */
         /* ------------------------------------------------ */
         .human-player {
             position: absolute;
@@ -160,37 +179,51 @@
         .player-head {
             width: 14px;
             height: 14px;
-            background-color: #ffcc99; /* গায়ের রঙ */
+            background-color: #ffcc99;
             border-radius: 50%;
             margin-bottom: -2px;
             z-index: 2;
         }
 
-        /* প্লেয়ারের জার্সি/বডি (চারকোনা ও নিচে সাদা বর্ডার) */
+        /* প্লেয়ারের জার্সি/বডি (চারকোনা ও নিচে সাদা প্যান্টের বর্ডার) */
         .player-body {
             width: 18px;
             height: 16px;
-            border-bottom: 4px solid white; /* নিচে সাদা দাগ/প্যান্ট */
+            border-bottom: 4px solid white;
             border-radius: 2px;
+            position: relative;
+        }
+
+        /* ক্রিকেট ব্যাট (জার্সির বডির সাথে পারফেক্টলি এলাইন্ড) */
+        .cricket-bat {
+            position: absolute;
+            width: 4px;
+            height: 14px;
+            background-color: #c68a4c;
+            left: -5px;
+            top: 4px;
+            transform: rotate(-25deg);
+            border-radius: 1px;
+            transform-origin: top right;
         }
 
         /* জার্সি কালার কোড */
-        .blue-team .player-body { background-color: #2979ff; } /* নীল ব্যাটার */
-        .orange-team .player-body { background-color: #ff6d00; } /* কমলা ফিল্ডার ও বোলার */
+        .blue-team .player-body { background-color: #2979ff; } /* ব্যাটিং টিম */
+        .orange-team .player-body { background-color: #ff6d00; } /* ফিল্ডিং টিম */
 
         /* পিচের ভেতরের প্লেয়ারদের সঠিক পজিশন */
         .batsman-pos {
             left: 50%;
             transform: translateX(-50%);
-            bottom: 38px; /* উইকেটের ঠিক সামনে ক্রিজের ওপর */
+            bottom: 38px;
         }
-        .bowler-pos {
+        .non-striker-pos {
             left: 50%;
             transform: translateX(-50%);
-            top: 3px; /* বোলার এন্ডের উইকেটের পেছনে */
+            top: 23px;
         }
 
-        /* মাঠের চারপাশের ফিল্ডারদের অবস্থান (১ম স্ক্রিনশটের মতো) */
+        /* মাঠের চারপাশের ফিল্ডারদের অবস্থান */
         .fielder-1 { top: 28%; left: 23%; }
         .fielder-2 { top: 62%; left: 18%; }
         .fielder-3 { top: 24%; left: 73%; }
@@ -249,29 +282,34 @@
                 <div class="stump-stick"></div>
             </div>
 
-            <!-- পিচের ভেতরের প্লেয়ার (মানুষের অবয়বে) -->
-            <!-- বোলার/নন-স্ট্রাইকার -->
-            <div class="human-player blue-team bowler-pos">
+            <!-- বোলার এন্ডে থাকা নন-স্ট্রাইকার ব্যাটার (নীল জার্সি) -->
+            <div class="human-player blue-team non-striker-pos">
                 <div class="player-head"></div>
                 <div class="player-body"></div>
             </div>
-            <!-- স্ট্রাইকার ব্যাটার (উইকেটের সামনে নিখুঁত পজিশনে) -->
+            
+            <!-- স্ট্রাইকার ব্যাটার (নীল জার্সি + প্রপারলি এলাইন্ড ক্রিকেট ব্যাট) -->
             <div class="human-player blue-team batsman-pos">
                 <div class="player-head"></div>
-                <div class="player-body"></div>
+                <div class="player-body">
+                    <div class="cricket-bat"></div>
+                </div>
             </div>
         </div>
 
-        <!-- ৪. মাঠের চারপাশের ফিল্ডাররা (কমলা জার্সি ও মানুষের অবয়ব) -->
+        <!-- ৪. ক্রিকেট বল (জাভাস্ক্রিপ্ট গেম মেকানিক্সের সুবিধার জন্য এখন গ্লোবাল কন্টেইনারে) -->
+        <div class="cricket-ball"></div>
+
+        <!-- ৫. মাঠের চারপাশের ফিল্ডাররা (কমলা জার্সি ও মানুষের অবয়ব) -->
         <div class="human-player orange-team fielder-1"><div class="player-head"></div><div class="player-body"></div></div>
         <div class="human-player orange-team fielder-2"><div class="player-head"></div><div class="player-body"></div></div>
         <div class="human-player orange-team fielder-3"><div class="player-head"></div><div class="player-body"></div></div>
         <div class="human-player orange-team fielder-4"><div class="player-head"></div><div class="player-body"></div></div>
 
-        <!-- বোলার (ওপরে উইকেটের সোজা পাশে দাঁড়ানো ফিল্ডার/বোলার) -->
-        <div class="human-player orange-team" style="top: 30%; left: 49.3%;"><div class="player-head"></div><div class="player-body"></div></div>
+        <!-- আসল বোলার (কমলা জার্সি) -->
+        <div class="human-player orange-team" style="top: 24%; left: 49.3%;"><div class="player-head"></div><div class="player-body"></div></div>
 
-        <!-- ৫. নিচের নির্দেশনাবলী -->
+        <!-- ৬. নিচের নির্দেশনাবলী -->
         <div class="bottom-ui">
             শট খেলতে: বল কাছে আসলে কিবোর্ডের ArrowUp বা W চাপুন।<br>
             ম্যানুয়াল রান নিতে: শট খেলার পর যতবার খুশি রান নিতে Spacebar (স্পেসবার) চাপুন।<br>
