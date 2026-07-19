@@ -2,7 +2,7 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <title>প্রো ক্রিকেট গেম - আল্টিমেট ফিক্স</title>
+    <title>ক্রিকেট গেম - মেসি এডিশন</title>
     <style>
         * {
             box-sizing: border-box;
@@ -190,7 +190,7 @@
             border-radius: 1px;
         }
 
-        /* অ্যাথলেটিক ক্রিকেট প্লেয়ার */
+        /* জেনারেল ক্রিকেট প্লেয়ার বেস */
         .pro-player {
             position: absolute;
             display: flex;
@@ -218,6 +218,40 @@
             background: #1565c0;
         }
 
+        /* 🔥 বিশেষ আকর্ষণ: লিওনেল মেসির মাথা (পিক্সেল আর্ট ডিজাইন) */
+        .messi-head {
+            width: 14px;
+            height: 15px;
+            background-color: #ffdbac; /* গায়ের রঙ */
+            border-radius: 50% 50% 40% 40%;
+            position: relative;
+            margin-bottom: 1px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        /* মেসির চুল */
+        .messi-head::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background-color: #4a3728; /* বাদামী চুল */
+            border-radius: 6px 6px 0 0;
+        }
+        /* মেসির আইকনিক দাড়ি */
+        .messi-head::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 1px;
+            width: 12px;
+            height: 5px;
+            background-color: #6e4e37; /* ফেমাস বিয়ার্ড লূক */
+            border-radius: 0 0 5px 5px;
+            clip-path: polygon(0 0, 100% 0, 90% 100%, 10% 100%);
+        }
+
         .player-jersey {
             width: 24px;
             height: 18px;
@@ -227,9 +261,7 @@
             clip-path: polygon(10% 0%, 90% 0%, 100% 100%, 0% 100%);
         }
 
-        .team-blue .player-helmet { background-color: #0d47a1; }
         .team-blue .player-jersey { background-color: #1976d2; }
-        
         .team-orange .player-helmet { background-color: #e65100; }
         .team-orange .player-helmet::after { background: #f57c00; }
         .team-orange .player-jersey { background-color: #f57c00; }
@@ -251,7 +283,7 @@
 
         /* গ্রাউন্ড পজিশনস */
         .pos-batsman { left: 50%; transform: translateX(-50%); bottom: 25px; }
-        .pos-nonstriker { left: 38%; top: 25%; } /* পিচের পাশে নিরাপদ স্থানে দৃশ্যমান */
+        .pos-nonstriker { left: 38%; top: 25%; } 
         .pos-bowler { top: 20%; left: 48.7%; }
         
         .fielder-left-top { top: 25%; left: 20%; }
@@ -297,7 +329,7 @@
         </div>
         
         <div class="instructions-bar">
-            <b>কন্ট্রোল গাইড:</b> বল ব্যাটারের কাছে পৌঁছালে কীবোর্ডের <b>ArrowUp</b> অথবা <b>W</b> চাপুন শট খেলার জন্য। সিঙ্গেল বা ডাবলস নিতে ফিল্ডার বল ফেরত পাঠানোর আগে যতবার খুশি <b>Spacebar</b> চাপুন।
+            <b>কন্ট্রোল গাইড:</b> বল মেসির কাছে পৌঁছালে কীবোর্ডের <b>ArrowUp</b> অথবা <b>W</b> চাপুন শট খেলার জন্য। রান নিতে ফিল্ডার বল ফেরত পাঠানোর আগে যতবার খুশি <b>Spacebar</b> চাপুন।
         </div>
     </div>
 
@@ -312,9 +344,9 @@
                 <div class="crease bottom"></div>
                 <div class="stumps bottom" id="target-stumps"><div class="stump"></div><div class="stump"></div><div class="stump"></div></div>
 
-                <!-- মেইন স্ট্রাইকার ব্যাটার -->
+                <!-- মেইন স্ট্রাইকার ব্যাটার (মেসি!) -->
                 <div class="pro-player team-blue pos-batsman" id="batsman">
-                    <div class="player-helmet"></div>
+                    <div class="messi-head"></div> <!-- মেসির মাথা এখানে সেট করা হয়েছে -->
                     <div class="player-jersey"><div class="pro-bat" id="bat"></div></div>
                 </div>
             </div>
@@ -380,7 +412,7 @@
             runAllowed = false;
             currentShotRuns = 0;
             currentRunText.innerText = 0;
-            gameStatus.innerText = "বোলার বল ছুড়ল! রেডি থাকুন...";
+            gameStatus.innerText = "বোলার বল ছুড়ল! মেসি স্ট্রাইকে...";
             gameStatus.style.color = "#ffd54f";
             
             ball.style.display = 'block';
@@ -389,12 +421,10 @@
 
             let ballTop = 24;
             
-            // রিয়ালিস্টিক স্মুথ এবং কন্ট্রোল্ড বল স্পিড
             ballTimer = setInterval(() => {
                 ballTop += 1.0; 
                 ball.style.top = ballTop + '%';
 
-                // পিক্সেল চেক লজিক: বল ব্যাটার বা স্টাম্প পজিশন ক্রস করলে বোল্ড
                 let ballRect = ball.getBoundingClientRect();
                 let stumpRect = targetStumps.getBoundingClientRect();
 
@@ -403,7 +433,7 @@
                     if (!isBallFlying) {
                         wickets++;
                         wicketsText.innerText = wickets;
-                        gameStatus.innerText = "বোল্ড আউট! নিখুঁত ডেলিভারি 🎯";
+                        gameStatus.innerText = "বোল্ড আউট! মেসি ফিরে যাচ্ছেন প্যাভিলিয়নে 🎯";
                         gameStatus.style.color = "#ff1744";
                         endDelivery();
                     }
@@ -414,47 +444,43 @@
         function playShot() {
             if (!isBallBowled || isBallFlying) return;
 
-            // ব্যাট সুইং অ্যানিমেশন ট্র্রিগার
             bat.style.transform = 'rotate(-110deg)';
             setTimeout(() => { bat.style.transform = 'rotate(-30deg)'; }, 150);
 
-            // পিক্সেল এক্যুরেট কোলিশন ডিটেকশন (getBoundingClientRect)
             let ballRect = ball.getBoundingClientRect();
             let batsmanRect = batsman.getBoundingClientRect();
 
-            // বলের সেন্টার এবং ব্যাটারের সেন্টার এর রেঞ্জ চেক
             if (ballRect.bottom >= batsmanRect.top - 20 && ballRect.top <= batsmanRect.bottom + 10) {
                 clearInterval(ballTimer);
                 isBallFlying = true;
                 
                 if (shotType === 'loft' && Math.random() > 0.4) {
-                    gameStatus.innerText = "দুর্দান্ত শট! ছক্কা! 🚀";
+                    gameStatus.innerText = "মেসির ক্লাসিক শট! ছক্কা! 🚀";
                     gameStatus.style.color = "#69f0ae";
                     animateBallOut(6);
                 } else if (Math.random() > 0.55) {
-                    gameStatus.innerText = "দারুণ টাইমিং! চার হলো! ⚡";
+                    gameStatus.innerText = "রোনালদিনহোর স্টাইলে চার মারলেন মেসি! ⚡";
                     gameStatus.style.color = "#69f0ae";
                     animateBallOut(4);
                 } else {
-                    gameStatus.innerText = "গ্যাপে শট! রান নেওয়ার জন্য Spacebar চাপুন!";
+                    gameStatus.innerText = "গ্যাপে শট! ড্রিবলিং স্পিডে রান নিন (Spacebar)!";
                     gameStatus.style.color = "#ffffff";
                     runAllowed = true;
                     animateBallField();
                 }
             } else {
-                gameStatus.innerText = "টাইমিং মিস! বিট হলেন।";
+                gameStatus.innerText = "টাইমিং মিস!";
                 gameStatus.style.color = "#a0b2a6";
             }
         }
 
-        // মাঠের বাইরে বাউন্ডারিতে বল যাওয়ার অ্যানিমেশন
         function animateBallOut(runs) {
             let ballTop = parseFloat(ball.style.top);
             let ballLeft = parseFloat(ball.style.left);
-            let angle = (Math.random() - 0.5) * 5; // ছিটকে যাওয়ার কোণ
+            let angle = (Math.random() - 0.5) * 5;
 
             const flyTimer = setInterval(() => {
-                ballTop += 4; // বল ব্যাটারের দিক থেকে মাঠের নিচের দিকে যাবে
+                ballTop += 4; 
                 ballLeft += angle;
                 ball.style.top = ballTop + '%';
                 ball.style.left = ballLeft + '%';
@@ -470,7 +496,6 @@
             }, 16);
         }
 
-        // মাঠের ভেতরে সিঙ্গেল/ডাবল রানের জন্য বল ড্রপ অ্যানিমেশন
         function animateBallField() {
             let ballTop = parseFloat(ball.style.top);
             let ballLeft = parseFloat(ball.style.left);
@@ -487,7 +512,6 @@
                 if (Math.abs(ballTop - targetTop) < 1) {
                     clearInterval(fieldTimer);
                     
-                    // ৩ সেকেন্ড সময় থাকবে রান নেওয়ার, তারপর ফিল্ডার বল থ্রো করবে
                     setTimeout(() => {
                         runAllowed = false;
                         gameStatus.innerText = "ফিল্ডার বল ফেরত পাঠিয়েছে।";
@@ -497,7 +521,6 @@
             }, 20);
         }
 
-        // রান নেওয়ার স্পেসবার ফাংশন
         function takeRun() {
             if (runAllowed && currentShotRuns < 3) {
                 currentShotRuns++;
@@ -513,13 +536,12 @@
             runAllowed = false;
         }
 
-        // কীবোর্ড বাইন্ডিং ফিক্স
         window.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
                 playShot();
             }
             if (e.code === 'Space') {
-                e.preventDefault(); // পেজ স্ক্রোল ডাউন হওয়া বন্ধ করবে
+                e.preventDefault();
                 takeRun();
             }
         });
