@@ -2,7 +2,7 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <title>ক্রিকেট গেম - মেসি এডিশন</title>
+    <title>ক্রিকেট গেম - রিয়াল মেসি এডিশন</title>
     <style>
         * {
             box-sizing: border-box;
@@ -218,38 +218,17 @@
             background: #1565c0;
         }
 
-        /* 🔥 বিশেষ আকর্ষণ: লিওনেল মেসির মাথা (পিক্সেল আর্ট ডিজাইন) */
-        .messi-head {
-            width: 14px;
-            height: 15px;
-            background-color: #ffdbac; /* গায়ের রঙ */
-            border-radius: 50% 50% 40% 40%;
-            position: relative;
+        /* 👑 এবার একদম আসল লিওনেল মেসির ফেস ইমেজ */
+        .messi-real-head {
+            width: 18px;
+            height: 18px;
+            background-image: url('https://upload.wikimedia.org/wikipedia/commons/c/c1/Lionel_Messi_20180626.jpg');
+            background-size: cover;
+            background-position: top center;
+            border-radius: 50%;
+            border: 1px solid #fff;
             margin-bottom: 1px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-        /* মেসির চুল */
-        .messi-head::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background-color: #4a3728; /* বাদামী চুল */
-            border-radius: 6px 6px 0 0;
-        }
-        /* মেসির আইকনিক দাড়ি */
-        .messi-head::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 1px;
-            width: 12px;
-            height: 5px;
-            background-color: #6e4e37; /* ফেমাস বিয়ার্ড লূক */
-            border-radius: 0 0 5px 5px;
-            clip-path: polygon(0 0, 100% 0, 90% 100%, 10% 100%);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
         .player-jersey {
@@ -346,7 +325,7 @@
 
                 <!-- মেইন স্ট্রাইকার ব্যাটার (মেসি!) -->
                 <div class="pro-player team-blue pos-batsman" id="batsman">
-                    <div class="messi-head"></div> <!-- মেসির মাথা এখানে সেট করা হয়েছে -->
+                    <div class="messi-real-head"></div> <!-- আসল মেসির মুখ -->
                     <div class="player-jersey"><div class="pro-bat" id="bat"></div></div>
                 </div>
             </div>
