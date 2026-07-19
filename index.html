@@ -4,177 +4,207 @@
     <meta charset="UTF-8">
     <title>ক্রিকেট গেম</title>
     <style>
-        /* আপনার গেমের মূল ব্যাকগ্রাউন্ড ও কন্টেইনার */
-        .game-container {
-            position: relative;
-            width: 100%;
-            height: 100vh;
-            background-color: #1a4329; /* মাঠের সবুজ রঙ */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #1c2826;
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
+            height: 100vh;
+            font-family: sans-serif;
         }
 
-        /* বাউন্ডারি লাইন (ড্যাশড ওভাল) */
-        .boundary {
-            position: absolute;
-            width: 90%;
-            height: 85%;
-            border: 2px dashed rgba(255, 255, 255, 0.6);
+        /* ১ম স্ক্রিনশটের হুবহু সবুজ মাঠ */
+        .game-field {
+            width: 1000px;
+            height: 480px;
+            background-color: #1f783c; 
             border-radius: 50%;
-        }
-
-        /* স্কোরবোর্ড (ওপরের কালো প্যানেল) */
-        .scoreboard {
-            position: absolute;
-            top: 20px;
-            background: #112211;
-            color: white;
-            padding: 10px 30px;
-            border-radius: 25px;
-            font-size: 16px;
-            z-index: 10;
-        }
-
-        /* কন্ট্রোল এরিয়া (বাটন ও মেসেজ) */
-        .controls-container {
-            position: absolute;
-            top: 80px;
+            border: 2px dashed rgba(255, 255, 255, 0.5); /* বাউন্ডারি ওভাল */
+            position: relative;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 10px;
-            z-index: 10;
+            justify-content: space-between;
+            padding: 20px 0;
         }
 
-        .instruction-text {
+        /* ওপরে কালো স্কোরবোর্ড */
+        .top-ui {
+            background-color: #11261d;
+            color: white;
+            padding: 8px 30px;
+            border-radius: 20px;
+            font-size: 15px;
+            z-index: 5;
+        }
+
+        /* মাঝখানের টেক্সট এবং কন্ট্রোল প্যানেল */
+        .controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            z-index: 5;
+            margin-top: -10px;
+        }
+
+        .info-msg {
             color: white;
             font-size: 16px;
-            margin-bottom: 5px;
         }
 
-        .button-group {
+        .btn-row {
             display: flex;
             gap: 15px;
             align-items: center;
         }
 
-        /* শট সিলেক্টর বাটন */
-        .shot-selector {
-            background: #22332B;
+        .shot-toggle {
+            background-color: #1e332a;
+            border: 2px solid #2d4f3e;
             border-radius: 20px;
             display: flex;
-            border: 2px solid #445544;
             overflow: hidden;
         }
 
-        .shot-btn {
-            padding: 8px 20px;
-            color: white;
+        .toggle-btn {
+            padding: 8px 18px;
+            color: #8fa399;
             border: none;
             background: transparent;
-            cursor: pointer;
             font-size: 14px;
+            cursor: pointer;
         }
 
-        .shot-btn.active {
-            background: #2e7d32; /* গ্রাউন্ড শট অ্যাক্টিভ হলে সবুজ */
-        }
-
-        /* নতুন ডেলিভারি বাটন */
-        .delivery-btn {
-            background: #d32f2f; /* লাল বাটন */
+        .toggle-btn.active {
+            background-color: #2e7d32;
             color: white;
-            padding: 8px 25px;
+        }
+
+        .new-ball-btn {
+            background-color: #e53935;
+            color: white;
+            padding: 8px 22px;
             border-radius: 20px;
             border: none;
+            font-size: 14px;
             font-weight: bold;
             cursor: pointer;
         }
 
         /* ------------------------------------------------ */
-        /* ফিক্সড পিচ এবং উইকেটের নিখুঁত পজিশন */
+        /* ফিক্সড পিচ এবং নিখুঁত ২ডি উইকেটের পজিশন */
         /* ------------------------------------------------ */
-        .pitch {
+        .cricket-pitch {
             position: absolute;
-            width: 85px;
-            height: 280px;
-            background: #dfc49f; /* পারফেক্ট মাটির কালার */
-            border: 1px solid #cbb28d;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            width: 75px;
+            height: 250px;
+            background-color: #d7bc9b; /* পিচের আসল কালার */
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -40%);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 25px 0; /* ক্রিজ লাইনের ইনসেট পজিশনিং */
         }
 
         /* সাদা ক্রিজ লাইন */
-        .crease {
-            position: absolute;
+        .bowling-crease {
             width: 100%;
             height: 2px;
             background-color: white;
-        }
-        .top-crease { top: 40px; }
-        .bottom-crease { bottom: 40px; }
-
-        /* স্টাম্পস/উইকেট এরিয়া (বাস্তবসম্মত লুক) */
-        .stumps {
             position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 22px;
+        }
+        .bowling-crease.top { top: 35px; }
+        .bowling-crease.bottom { bottom: 35px; }
+
+        /* স্টাম্পস/উইকেট (৩টি কাঠের কাঠি) */
+        .wicket-stumps {
+            width: 20px;
             display: flex;
             justify-content: space-between;
+            position: absolute;
+            z-index: 3;
         }
-        /* টপ বোলার এন্ড উইকেট */
-        .stumps.top { top: 22px; }
-        /* বটম ব্যাটার এন্ড উইকেট */
-        .stumps.bottom { bottom: 22px; }
+        .wicket-stumps.top { top: 22px; }
+        .wicket-stumps.bottom { bottom: 22px; }
 
-        .stump {
-            width: 4px;
+        .stump-stick {
+            width: 3.5px;
             height: 12px;
-            background: #e67e22; /* কাঠের কালার */
+            background-color: #e08e39; /* স্টাম্পের রঙ */
             border-radius: 1px;
         }
 
-        /* প্লেয়ারদের অবস্থান (ডট স্টাইল) */
-        .player-dot {
+        /* ------------------------------------------------ */
+        /* আপনার আসল মানুষের মতো দেখতে প্লেয়ার ডিজাইন (CSS Sprite) */
+        /* ------------------------------------------------ */
+        .human-player {
             position: absolute;
-            width: 22px;
-            height: 22px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 20px;
+            z-index: 4;
+        }
+
+        /* প্লেয়ারের গোল মাথা */
+        .player-head {
+            width: 14px;
+            height: 14px;
+            background-color: #ffcc99; /* গায়ের রঙ */
             border-radius: 50%;
-            border: 2px solid white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            margin-bottom: -2px;
+            z-index: 2;
         }
 
-        /* ফিল্ডার (কমলা রঙের জার্সি) */
-        .fielder { background-color: #ff6f00; }
+        /* প্লেয়ারের জার্সি/বডি (চারকোনা ও নিচে সাদা বর্ডার) */
+        .player-body {
+            width: 18px;
+            height: 16px;
+            border-bottom: 4px solid white; /* নিচে সাদা দাগ/প্যান্ট */
+            border-radius: 2px;
+        }
 
-        /* ব্যাটার (নীল জার্সি - সে থাকবে উইকেটের সামনে/ক্রিজে) */
-        .batsman {
-            background-color: #1976d2;
+        /* জার্সি কালার কোড */
+        .blue-team .player-body { background-color: #2979ff; } /* নীল ব্যাটার */
+        .orange-team .player-body { background-color: #ff6d00; } /* কমলা ফিল্ডার ও বোলার */
+
+        /* পিচের ভেতরের প্লেয়ারদের সঠিক পজিশন */
+        .batsman-pos {
             left: 50%;
             transform: translateX(-50%);
-            bottom: 45px; /* ক্রিজের ঠিক ওপর */
+            bottom: 38px; /* উইকেটের ঠিক সামনে ক্রিজের ওপর */
         }
-
-        /* বোলার/নন-স্ট্রাইকার (নীল/লাল জার্সি) */
-        .bowler-end-player {
-            background-color: #1976d2;
+        .bowler-pos {
             left: 50%;
             transform: translateX(-50%);
-            top: 15px;
+            top: 3px; /* বোলার এন্ডের উইকেটের পেছনে */
         }
 
-        /* নিচের নোটিশ টেক্সট এরিয়া */
-        .bottom-instructions {
-            position: absolute;
-            bottom: 20px;
-            color: rgba(255,255,255,0.8);
+        /* মাঠের চারপাশের ফিল্ডারদের অবস্থান (১ম স্ক্রিনশটের মতো) */
+        .fielder-1 { top: 28%; left: 23%; }
+        .fielder-2 { top: 62%; left: 18%; }
+        .fielder-3 { top: 24%; left: 73%; }
+        .fielder-4 { top: 58%; left: 78%; }
+
+        /* নিচের নোটিশ ও নির্দেশনাবলী */
+        .bottom-ui {
+            color: rgba(255, 255, 255, 0.8);
             text-align: center;
             font-size: 13px;
             line-height: 1.6;
+            z-index: 5;
         }
-        .warning-text {
+        .warning {
             color: #ffeb3b;
             font-weight: bold;
         }
@@ -182,60 +212,72 @@
 </head>
 <body>
 
-    <div class="game-container">
-        <!-- বাউন্ডারি ওভাল -->
-        <div class="boundary"></div>
-
-        <!-- ওপরের স্কোরবোর্ড (হুবহু আগের টেক্সট) -->
-        <div class="scoreboard">
+    <div class="game-field">
+        
+        <!-- ১. ওপরের স্কোরবোর্ড -->
+        <div class="top-ui">
             আপনার রান: <span style="color: #ffeb3b;">0</span> | চলতি শটে রান: <span style="color: #ffeb3b;">0</span> | উইকেট: <span style="color: #00e676;">0</span>
         </div>
 
-        <!-- মাঝখানের বাটন ও টেক্সটসমূহ -->
-        <div class="controls-container">
-            <div class="instruction-text">খেলতে নতুন ডেলিভারি বাটনে চাপুন</div>
-            <div class="button-group">
-                <div class="shot-selector">
-                    <button class="shot-btn active">Ground Shot</button>
-                    <button class="shot-btn">Loft Shot</button>
+        <!-- ২. কন্ট্রোল বাটন ও মেসেজ -->
+        <div class="controls">
+            <div class="info-msg">খেলতে নতুন ডেলিভারি বাটনে চাপুন</div>
+            <div class="btn-row">
+                <div class="shot-toggle">
+                    <button class="toggle-btn active">Ground Shot</button>
+                    <button class="toggle-btn">Loft Shot</button>
                 </div>
-                <button class="delivery-btn">নতুন ডেলিভারি</button>
+                <button class="new-ball-btn">নতুন ডেলিভারি</button>
             </div>
         </div>
 
-        <!-- মূল ক্রিকেট পিচ (সঠিক উইকেটের পজিশনসহ) -->
-        <div class="pitch">
-            <!-- ওপরের উইকেট ও ক্রিজ -->
-            <div class="crease top-crease"></div>
-            <div class="stumps top">
-                <div class="stump"></div>
-                <div class="stump"></div>
-                <div class="stump"></div>
+        <!-- ৩. মূল পিচ ও পজিশন ফিক্সড উইকেট -->
+        <div class="cricket-pitch">
+            <!-- বোলার এন্ডের ক্রিজ ও উইকেট -->
+            <div class="bowling-crease top"></div>
+            <div class="wicket-stumps top">
+                <div class="stump-stick"></div>
+                <div class="stump-stick"></div>
+                <div class="stump-stick"></div>
             </div>
-            <div class="player-dot bowler-end-player"></div> <!-- ওপরের প্লেয়ার -->
 
-            <!-- নিচের উইকেট ও ক্রিজ -->
-            <div class="crease bottom-crease"></div>
-            <div class="stumps bottom">
-                <div class="stump"></div>
-                <div class="stump"></div>
-                <div class="stump"></div>
+            <!-- ব্যাটার এন্ডের ক্রিজ ও উইকেট -->
+            <div class="bowling-crease bottom"></div>
+            <div class="wicket-stumps bottom">
+                <div class="stump-stick"></div>
+                <div class="stump-stick"></div>
+                <div class="stump-stick"></div>
             </div>
-            <div class="player-dot batsman"></div> <!-- মূল ব্যাটার -->
+
+            <!-- পিচের ভেতরের প্লেয়ার (মানুষের অবয়বে) -->
+            <!-- বোলার/নন-স্ট্রাইকার -->
+            <div class="human-player blue-team bowler-pos">
+                <div class="player-head"></div>
+                <div class="player-body"></div>
+            </div>
+            <!-- স্ট্রাইকার ব্যাটার (উইকেটের সামনে নিখুঁত পজিশনে) -->
+            <div class="human-player blue-team batsman-pos">
+                <div class="player-head"></div>
+                <div class="player-body"></div>
+            </div>
         </div>
 
-        <!-- মাঠের চারপাশে ফিল্ডারদের পজিশন (আপনার আগের মতো করে রাখা হয়েছে) -->
-        <div class="player-dot fielder" style="top: 30%; left: 25%;"></div>
-        <div class="player-dot fielder" style="top: 65%; left: 20%;"></div>
-        <div class="player-dot fielder" style="top: 25%; left: 75%;"></div>
-        <div class="player-dot fielder" style="top: 60%; left: 78%;"></div>
+        <!-- ৪. মাঠের চারপাশের ফিল্ডাররা (কমলা জার্সি ও মানুষের অবয়ব) -->
+        <div class="human-player orange-team fielder-1"><div class="player-head"></div><div class="player-body"></div></div>
+        <div class="human-player orange-team fielder-2"><div class="player-head"></div><div class="player-body"></div></div>
+        <div class="human-player orange-team fielder-3"><div class="player-head"></div><div class="player-body"></div></div>
+        <div class="human-player orange-team fielder-4"><div class="player-head"></div><div class="player-body"></div></div>
 
-        <!-- নিচের নির্দেশনাবলী (হুবহু আগের টেক্সট) -->
-        <div class="bottom-instructions">
+        <!-- বোলার (ওপরে উইকেটের সোজা পাশে দাঁড়ানো ফিল্ডার/বোলার) -->
+        <div class="human-player orange-team" style="top: 30%; left: 49.3%;"><div class="player-head"></div><div class="player-body"></div></div>
+
+        <!-- ৫. নিচের নির্দেশনাবলী -->
+        <div class="bottom-ui">
             শট খেলতে: বল কাছে আসলে কিবোর্ডের ArrowUp বা W চাপুন।<br>
             ম্যানুয়াল রান নিতে: শট খেলার পর যতবার খুশি রান নিতে Spacebar (স্পেসবার) চাপুন।<br>
-            <span class="warning-text">⚠ সতর্কবার্তা: ফিল্ডার বল ফেরত পাঠানোর আগে ক্রিজে না পৌঁছালে আপনি রান আউট হবেন!</span>
+            <span class="warning">⚠ সতর্কবার্তা: ফিল্ডার বল ফেরত পাঠানোর আগে ক্রিজে না পৌঁছালে আপনি রান আউট হবেন!</span>
         </div>
+
     </div>
 
 </body>
