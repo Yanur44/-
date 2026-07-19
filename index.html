@@ -23,7 +23,7 @@
             user-select: none;
         }
 
-        /* ওপরের কমপ্যাক্ট কন্ট্রোল এবং ড্যাশবোর্ড প্যানেল */
+        /* ওপরের ড্যাশবোর্ড প্যানেল */
         .dashboard-container {
             width: 1000px;
             background: #1c2a24;
@@ -111,7 +111,7 @@
             line-height: 1.5;
         }
 
-        /* প্রিমিয়াম ক্রিকেট স্টেডিয়াম */
+        /* ক্রিকেট স্টেডিয়াম */
         .game-field {
             width: 1000px;
             height: 480px;
@@ -123,7 +123,7 @@
             overflow: hidden;
         }
 
-        /* রিয়ালিস্টিক মাটির পিচ */
+        /* মাটির পিচ */
         .cricket-pitch {
             position: absolute;
             width: 65px;
@@ -164,7 +164,7 @@
             border-radius: 1px;
         }
 
-        /* রিয়ালিস্টিক ক্রিকেট প্লেয়ার মেকার (প্রো অ্যাথলেটিক বডি) */
+        /* রিয়ালিস্টিক ক্রিকেট প্লেয়ার মেকার */
         .pro-player {
             position: absolute;
             display: flex;
@@ -174,7 +174,6 @@
             z-index: 4;
         }
 
-        /* গোল মুখের বদলে হেলমেট/ক্যাপ লুক */
         .player-helmet {
             width: 12px;
             height: 13px;
@@ -184,7 +183,6 @@
             margin-bottom: 1px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
-        /* হেলমেটের শেড বা প্রটেক্টর */
         .player-helmet::after {
             content: '';
             position: absolute;
@@ -195,7 +193,6 @@
             background: #1565c0;
         }
 
-        /* কার্টুনিশ গোল বডির বদলে চওড়া কাঁধ ও ভি-শেপ জার্সি */
         .player-jersey {
             width: 24px;
             height: 18px;
@@ -205,7 +202,7 @@
             clip-path: polygon(10% 0%, 90% 0%, 100% 100%, 0% 100%);
         }
 
-        /* প্রো টিম কালার স্কিম */
+        /* টিম কালার */
         .team-blue .player-helmet { background-color: #0d47a1; }
         .team-blue .player-jersey { background-color: #1976d2; }
         
@@ -213,7 +210,6 @@
         .team-orange .player-helmet::after { background: #f57c00; }
         .team-orange .player-jersey { background-color: #f57c00; }
 
-        /* ক্রিকেট ব্যাট স্টিল ডিজাইন */
         .pro-bat {
             position: absolute;
             width: 4px;
@@ -229,7 +225,10 @@
 
         /* গ্রাউন্ড পজিশনস */
         .pos-batsman { left: 50%; transform: translateX(-50%); bottom: 32px; }
-        .pos-nonstriker { left: 50%; transform: translateX(-50%); top: 18px; }
+        
+        /* 💡 ফিক্সড: নন-স্ট্রাইকারকে উইকেটের ডানপাশে সরানো হয়েছে */
+        .pos-nonstriker { left: 70px; top: 18px; } 
+        
         .pos-bowler { top: 20%; left: 48.7%; }
         
         .fielder-left-top { top: 25%; left: 20%; }
@@ -254,11 +253,10 @@
 </head>
 <body>
 
-    <!-- ওপরের সাইডে সমস্ত টেক্সট এবং কন্ট্রোল এলিমেন্ট -->
     <div class="dashboard-container">
         <div class="row-one">
             <div class="score-box">
-                আপনার রান: <span id="total-runs" style="color: #ffd54f;">0</span> 
+                आपका রান: <span id="total-runs" style="color: #ffd54f;">0</span> 
                 &nbsp;|&nbsp; চলতি শটে: <span id="current-run" style="color: #ffd54f;">0</span> 
                 &nbsp;|&nbsp; উইকেট: <span id="wickets" style="color: #69f0ae;">0</span>
             </div>
@@ -279,7 +277,6 @@
         </div>
     </div>
 
-    <!-- নিচে সম্পূর্ণ ফ্রেশ ও পরিষ্কার মাঠ -->
     <div class="game-field">
         
         <div class="cricket-pitch">
@@ -289,12 +286,6 @@
             <div class="crease bottom"></div>
             <div class="stumps bottom"><div class="stump"></div><div class="stump"></div><div class="stump"></div></div>
 
-            <!-- নন-স্ট্রাইকার ব্যাটার -->
-            <div class="pro-player team-blue pos-nonstriker">
-                <div class="player-helmet"></div>
-                <div class="player-jersey"></div>
-            </div>
-            
             <!-- মেইন স্ট্রাইকার ব্যাটার -->
             <div class="pro-player team-blue pos-batsman" id="batsman">
                 <div class="player-helmet"></div>
@@ -302,15 +293,19 @@
             </div>
         </div>
 
+        <!-- নন-স্ট্রাইকার ব্যাটার (উইকেটের পাশ ঘেঁষে পজিশন ফিক্সড) -->
+        <div class="pro-player team-blue pos-nonstriker">
+            <div class="player-helmet"></div>
+            <div class="player-jersey"></div>
+        </div>
+
         <div class="cricket-ball" id="ball"></div>
 
-        <!-- প্রফেশনাল অ্যাথলেটিক ফিল্ডাররা -->
+        <!-- ফিল্ডার ও বোলার -->
         <div class="pro-player team-orange fielder-left-top"><div class="player-helmet"></div><div class="player-jersey"></div></div>
         <div class="pro-player team-orange fielder-left-bottom"><div class="player-helmet"></div><div class="player-jersey"></div></div>
         <div class="pro-player team-orange fielder-right-top"><div class="player-helmet"></div><div class="player-jersey"></div></div>
         <div class="pro-player team-orange fielder-right-bottom"><div class="player-helmet"></div><div class="player-jersey"></div></div>
-        
-        <!-- প্রফেশনাল বোলার -->
         <div class="pro-player team-orange pos-bowler"><div class="player-helmet"></div><div class="player-jersey"></div></div>
 
     </div>
